@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matrix Digital Growth Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111318; --bg-2:#0c0e13; --card:#1e1f25; --card-2:#1a1b21; --surface:#282a2f;
+    --text:#e2e2e9; --muted:#c7c4d8; --placeholder:#777583;
+    --accent:#635bff; --accent-soft:#c3c0ff; --accent-on:#fefaff; --info:#7bd0ff; --ice:#c4e7ff;
+    --radius-lg:16px; --radius-md:12px;
+    --shadow-glow:0 0 10px rgba(99,91,255,.4);
+    --font-head:'Space Grotesk', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:90px}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img,svg{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:none}
+  .wrap{max-width:1440px;margin:0 auto;padding:0 128px}
+  section{position:relative}
+
+  /* ---------- Shared type ---------- */
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--surface);color:var(--accent-soft);font:600 11px/1 var(--font-body);letter-spacing:.11em;text-transform:uppercase;padding:7px 12px;border-radius:999px}
+  .h2{font:700 48px/1.1 var(--font-head);letter-spacing:-.025em;color:var(--text)}
+  .lead{font:400 18px/1.6 var(--font-body);color:var(--muted)}
+  .center{text-align:center}
+  .center .lead{max-width:768px;margin:0 auto}
+
+  /* ---------- Buttons ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:50px;padding:0 24px;border-radius:12px;font:600 14px/1 var(--font-body);transition:transform .2s ease, box-shadow .2s ease, background .2s ease;white-space:nowrap}
+  .btn:hover{transform:translateY(-2px)}
+  .btn:focus-visible,.nav-link:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
+  .btn-primary{background:var(--accent);color:var(--accent-on);box-shadow:0 0 12px rgba(99,91,255,.45)}
+  .btn-primary:hover{box-shadow:0 0 18px rgba(99,91,255,.7)}
+  .btn-secondary{background:var(--surface);color:var(--text)}
+  .btn-secondary:hover{background:#33353b}
+  .btn svg{width:18px;height:18px;transition:transform .2s ease}
+  .btn:hover svg{transform:translate(2px,-2px)}
+
+  /* ---------- NAVIGATION ---------- */
+  .nav{position:sticky;top:0;z-index:50;background:var(--bg);transition:box-shadow .3s}
+  .nav.scrolled{box-shadow:0 8px 24px rgba(0,0,0,.45)}
+  .nav-inner{height:80px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .logo{font:700 26px/1 var(--font-head);letter-spacing:-.03em;color:var(--text);white-space:nowrap}
+  .logo span{color:var(--accent)}
+  .nav-links{display:flex;gap:6px;background:var(--bg-2);border-radius:26px;padding:7px}
+  .nav-link{position:relative;padding:12px 16px;border-radius:20px;font:500 14px/1 var(--font-body);color:var(--muted);transition:color .2s, background .2s}
+  .nav-link:hover{color:var(--text)}
+  .nav-link.active{background:#1e1f25;color:var(--text)}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .nav-cta{height:38px;padding:0 18px;border-radius:8px;background:var(--accent);color:var(--accent-on);font:500 14px/1 var(--font-body);box-shadow:var(--shadow-glow);transition:transform .2s}
+  .nav-cta:hover{transform:translateY(-1px)}
+  .account{width:32px;height:32px;border-radius:16px;background:var(--accent-soft);display:grid;place-items:center;color:#1f1a5e}
+  .account svg{width:18px;height:18px}
+  .burger{display:none;width:40px;height:40px;border-radius:10px;background:var(--surface);place-items:center}
+  .burger svg{width:20px;height:20px}
+  .mobile-menu{display:none}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:56px 0 96px;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,475px);gap:48px;align-items:center;min-height:756px}
+  .hero-copy{padding-top:24px}
+  .hero-copy .eyebrow{margin-bottom:24px}
+  .hero h1{font:700 72px/76px var(--font-head);letter-spacing:-.03em;color:var(--text);margin-bottom:26px}
+  .grad{background:linear-gradient(90deg,#e2e2e9 0%,#c3c0ff 50%,#c4e7ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .lead{max-width:682px;margin-bottom:44px}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:40px}
+  .tagline{display:flex;align-items:center;gap:16px;font:500 14px/1.2 var(--font-body);letter-spacing:.02em;color:var(--accent-soft)}
+  .tagline::before{content:"";width:24px;height:1px;background:var(--accent)}
+
+  .preview{position:relative;background:var(--card-2);border-radius:16px;overflow:hidden;box-shadow:0 24px 48px -12px rgba(0,0,0,.8);height:340px}
+  .chrome{height:36px;background:var(--surface);display:flex;align-items:center;padding:0 16px;gap:16px;position:relative}
+  .dots{display:flex;gap:6px}
+  .dots i{width:10px;height:10px;border-radius:5px;display:block}
+  .dots i:nth-child(1){background:#93000a}.dots i:nth-child(2){background:#3d31ad}.dots i:nth-child(3){background:#007ca8}
+  .addr{position:absolute;left:150px;top:9px;width:202px;height:18px;border-radius:4px;background:var(--bg-2);display:flex;align-items:center;padding-left:12px;font:600 11px/1 var(--font-body);color:var(--muted)}
+  .addr svg{position:absolute;right:8px;width:14px;height:14px}
+  .preview-body{position:absolute;inset:36px 0 0 0;background:var(--bg-2)}
+  .workspace{position:absolute;left:24px;top:24px;width:427px;height:176px;border-radius:12px;overflow:hidden;background:
+      radial-gradient(circle at 80% 20%,rgba(99,91,255,.45),transparent 45%),
+      radial-gradient(circle at 15% 90%,rgba(123,208,255,.25),transparent 50%),
+      linear-gradient(135deg,#1c1d2e,#0c0e13)}
+  .workspace::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,14,19,0) 0%,rgba(12,14,19,.9) 100%)}
+  .shape{position:absolute;border:1px solid rgba(195,192,255,.35);border-radius:14px;transform:rotate(-12deg)}
+  .shape.a{width:110px;height:70px;left:40px;top:30px}
+  .shape.b{width:70px;height:70px;left:230px;top:22px;transform:rotate(18deg);border-radius:50%}
+  .shape.c{width:150px;height:44px;left:250px;top:110px;transform:rotate(-6deg);background:rgba(99,91,255,.18)}
+  .badge-live{position:absolute;left:12px;bottom:12px;z-index:1;background:var(--accent);color:var(--accent-on);font:600 11px/1 var(--font-body);padding:5px 10px;border-radius:4px}
+  .badge-speed{position:absolute;right:12px;bottom:12px;z-index:1;background:var(--bg);color:var(--text);font:600 11px/1 var(--font-body);padding:5px 8px;border-radius:4px}
+  .preview h3{position:absolute;left:24px;top:256px;font:700 20px/1.3 var(--font-head);color:var(--text)}
+  .preview p{position:absolute;left:24px;top:286px;font:400 13px/1.5 var(--font-body);color:var(--muted)}
+  .interactive{position:absolute;right:24px;top:266px;height:30px;padding:0 12px;border-radius:8px;background:var(--card);color:var(--accent-soft);font:500 14px/30px var(--font-body)}
+
+  .metric{position:absolute;right:-24px;bottom:-40px;width:243px;height:78px;background:var(--card);border-radius:12px;box-shadow:0 20px 20px rgba(0,0,0,.8);display:flex;align-items:center;gap:14px;padding:0 16px}
+  .verified{width:44px;height:44px;border-radius:8px;background:#272344;display:grid;place-items:center;flex:none}
+  .verified svg{width:24px;height:24px;color:var(--accent-soft)}
+  .metric strong{display:block;font:700 20px/1.3 var(--font-head);color:var(--text)}
+  .metric small{display:block;font:400 13px/1.4 var(--font-body);color:var(--muted)}
+  .live{position:absolute;right:16px;top:25px;width:8px;height:8px;border-radius:4px;background:var(--info);box-shadow:0 0 8px var(--info)}
+  .metric-wrap{position:relative}
+
+  /* ---------- PRICING ---------- */
+  .pricing{background:var(--bg-2);padding:96px 0 120px}
+  .pricing .head{margin-bottom:72px}
+  .pricing .h2{margin:24px 0 20px}
+  .plans{display:grid;grid-template-columns:repeat(3,minmax(0,373px));justify-content:center;gap:32px;align-items:start}
+  .plan{position:relative;background:var(--card-2);border-radius:var(--radius-lg);padding:40px 32px;box-shadow:0 12px 16px rgba(0,0,0,.4);display:flex;flex-direction:column;transition:transform .3s ease, box-shadow .3s ease}
+  .plan:hover{transform:translateY(-6px);box-shadow:0 20px 30px rgba(0,0,0,.5)}
+  .plan.featured{background:var(--card);box-shadow:0 20px 24px rgba(99,91,255,.25);margin-top:-8px}
+  .plan.featured:hover{box-shadow:0 24px 34px rgba(99,91,255,.35)}
+  .tier{font:600 11px/1 var(--font-body);letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+  .plan.featured .tier{color:var(--accent-soft)}
+  .plan h3{font:700 24px/1.25 var(--font-head);letter-spacing:-.01em;margin-bottom:12px}
+  .plan .desc{font:400 13px/1.6 var(--font-body);color:var(--muted);min-height:42px;margin-bottom:24px}
+  .price{background:var(--surface);border-radius:12px;padding:16px;margin-bottom:28px}
+  .plan.featured .price{background:var(--surface)}
+  .price small{display:block;font:600 11px/1 var(--font-body);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+  .price strong{display:block;font:700 32px/1.2 var(--font-head);letter-spacing:-.015em}
+  .plan .inc-title{font:600 11px/1 var(--font-body);letter-spacing:.06em;color:var(--text);text-transform:uppercase;margin-bottom:16px}
+  .plan.featured .inc-title{color:var(--accent-soft)}
+  .plan ul{list-style:none;display:grid;gap:14px;margin-bottom:32px;flex:1}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font:400 13px/1.5 var(--font-body);color:var(--text)}
+  .plan li svg{width:16px;height:16px;flex:none;margin-top:2px;color:var(--accent-soft)}
+  .plan .btn{width:100%}
+  .btn-ghost{background:var(--surface);color:var(--text)}
+  .badge-pop{position:absolute;top:-14px;left:50%;transform:translateX(-50%);height:24px;padding:0 14px;border-radius:12px;background:var(--accent);color:var(--accent-on);display:flex;align-items:center;gap:6px;font:700 11px/1 var(--font-body);letter-spacing:.04em;box-shadow:0 0 8px rgba(99,91,255,.6);white-space:nowrap}
+  .badge-pop svg{width:12px;height:12px}
+
+  /* ---------- CONTACT ---------- */
+  .contact{background:var(--card-2);padding:96px 0 110px}
+  .contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,664px);gap:64px;align-items:start}
+  .contact .eyebrow{margin-bottom:24px}
+  .contact .h2{margin-bottom:24px}
+  .contact .lead{max-width:465px;margin-bottom:40px}
+  .quote{position:relative;background:var(--card);border-radius:12px;padding:24px 24px 24px 46px;max-width:456px;margin-bottom:48px}
+  .quote::before{content:"";position:absolute;left:24px;top:24px;bottom:24px;width:6px;border-radius:3px;background:var(--accent)}
+  .quote p{font:italic 500 19px/1.4 var(--font-body);color:var(--text);letter-spacing:-.01em}
+  .assure-label{font:600 11px/1 var(--font-body);letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+  .assure{display:flex;gap:12px;flex-wrap:wrap}
+  .assure div{width:144px;height:68px;border-radius:8px;background:var(--surface);display:flex;align-items:center;gap:10px;padding:0 12px;font:500 13px/1.3 var(--font-body)}
+  .assure svg{width:20px;height:20px;flex:none;color:var(--accent-soft)}
+
+  .form-card{background:var(--card);border-radius:16px;padding:40px;box-shadow:0 20px 20px rgba(0,0,0,.7)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+  .field{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .field.full{grid-column:1/-1;margin-bottom:24px}
+  .field label{font:500 14px/1.2 var(--font-body);color:var(--text)}
+  .field label .req{color:var(--accent-soft)}
+  .control{position:relative}
+  .field input,.field select,.field textarea{width:100%;background:var(--bg-2);border:1px solid transparent;border-radius:12px;height:48px;padding:0 16px;font:400 15px/1.4 var(--font-body);color:var(--text);transition:border-color .2s, box-shadow .2s;appearance:none;-webkit-appearance:none}
+  .field input::placeholder,.field textarea::placeholder{color:var(--placeholder)}
+  .field textarea{height:128px;padding:16px;resize:vertical}
+  .field select{padding-right:44px;color:var(--placeholder);cursor:pointer}
+  .field select:valid{color:var(--text)}
+  .field select option{background:var(--bg-2);color:var(--text)}
+  .field input:hover,.field select:hover,.field textarea:hover{border-color:#2b2e37}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,91,255,.25)}
+  .chev{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:24px;height:24px;color:var(--accent-soft);pointer-events:none}
+  .submit{width:100%;height:56px;font:700 14px/1 var(--font-body);margin-top:8px;border-radius:12px}
+  .privacy{display:flex;align-items:center;gap:10px;margin-top:20px;font:400 13px/1.5 var(--font-body);color:var(--muted)}
+  .privacy svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
+  .form-status{margin-top:14px;font:500 14px/1.4 var(--font-body);color:var(--accent-soft);min-height:20px}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials{background:var(--bg);padding:96px 0 110px}
+  .testimonials .head{margin-bottom:72px}
+  .testimonials .h2{margin:24px 0 20px}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,373px));justify-content:center;gap:32px}
+  .t-card{background:var(--card);border-radius:var(--radius-lg);padding:37px 32px 32px;box-shadow:0 4px 3px rgba(0,0,0,.1);display:flex;flex-direction:column;transition:transform .3s ease, box-shadow .3s ease, border-color .3s;border:1px solid transparent}
+  .t-card:hover{transform:translateY(-6px);box-shadow:0 20px 30px rgba(0,0,0,.45);border-color:rgba(99,91,255,.25)}
+  .stars{display:flex;gap:4px;margin-bottom:24px;color:#e8b64c}
+  .stars svg{width:18px;height:18px}
+  .t-card blockquote{font:italic 400 15px/1.625 var(--font-body);color:var(--text);flex:1;margin-bottom:32px}
+  .who{display:flex;align-items:center;gap:16px}
+  .avatar{width:48px;height:48px;border-radius:24px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,#635bff,#7bd0ff);color:#fff;font:700 16px/1 var(--font-head)}
+  .who strong{display:block;font:700 20px/1.3 var(--font-head);letter-spacing:-.01em}
+  .who small{display:block;font:400 13px/1.5 var(--font-body);color:var(--muted)}
+
+  /* ---------- FAQ ---------- */
+  .faq{background:var(--bg-2);padding:96px 0 110px}
+  .faq .head{margin-bottom:64px}
+  .faq .h2{margin:24px 0 0}
+  .accordion{max-width:800px;margin:0 auto;display:grid;gap:16px}
+  .qa{background:var(--card);border-radius:16px;overflow:hidden;transition:background .25s}
+  .qa.open{background:var(--card)}
+  .qa summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 24px;cursor:pointer;font:500 20px/1.3 var(--font-head);letter-spacing:-.01em;color:var(--text)}
+  .qa summary::-webkit-details-marker{display:none}
+  .qa .ico{width:32px;height:32px;border-radius:16px;background:var(--surface);display:grid;place-items:center;flex:none;transition:background .2s, transform .3s}
+  .qa .ico svg{width:18px;height:18px;color:var(--accent-soft)}
+  .qa.open .ico{background:var(--accent)}
+  .qa.open .ico svg{color:var(--accent-on)}
+  .qa .ans{padding:0 24px 26px;font:400 15px/1.625 var(--font-body);color:var(--muted);max-width:756px;animation:fade .35s ease}
+  .qa .ico .minus{display:none}
+  .qa.open .ico .plus{display:none}
+  .qa.open .ico .minus{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  /* ---------- CLOSING CTA ---------- */
+  .closing{position:relative;padding:96px 0;text-align:center;background:linear-gradient(90deg,rgba(99,91,255,.05),rgba(99,91,255,.05)),linear-gradient(180deg,#111318 0%,#0c0e13 100%)}
+  .closing h2{font:700 48px/1.1 var(--font-head);letter-spacing:-.025em;margin-bottom:24px}
+  .closing p{font:400 18px/1.6 var(--font-body);color:var(--muted);max-width:720px;margin:0 auto 40px}
+  .closing .btn{height:60px;padding:0 32px;font-size:14px}
+
+  /* ---------- FOOTERS ---------- */
+  .footer{background:var(--bg-2);color:var(--muted)}
+  .footer-main{padding:64px 0 48px}
+  .footer-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr);gap:48px}
+  .brand-col .brand{display:flex;align-items:center;gap:22px;margin-bottom:20px}
+  .brand-dot{width:12px;height:12px;border-radius:6px;background:var(--accent);flex:none}
+  .brand-name{font:700 20px/1 var(--font-head);letter-spacing:-.025em;color:var(--text)}
+  .brand-name span{color:var(--accent)}
+  .brand-col p{font:400 15px/1.625 var(--font-body);max-width:390px}
+  .col h4{font:700 11px/1 var(--font-body);letter-spacing:.06em;color:var(--text);text-transform:uppercase;margin-bottom:24px}
+  .col ul{list-style:none;display:grid;gap:12px}
+  .col a{font:400 13px/1.5 var(--font-body);color:var(--muted);transition:color .2s}
+  .col a:hover{color:var(--accent-soft)}
+  .contact-list{display:grid;gap:14px}
+  .contact-list div{display:flex;align-items:center;gap:12px;font:400 13px/1.5 var(--font-body)}
+  .contact-list svg{width:14px;height:14px;flex:none;color:var(--accent-soft)}
+  .socials{display:flex;gap:12px;margin-top:20px}
+  .socials a{width:36px;height:36px;border-radius:8px;background:var(--card);display:grid;place-items:center;transition:background .2s, transform .2s}
+  .socials a:hover{background:var(--surface);transform:translateY(-2px)}
+  .socials svg{width:16px;height:16px;color:var(--muted)}
+  .footer-bottom{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:24px 0 40px;font:400 13px/1.5 var(--font-body)}
+  .footer-bottom .tag{color:var(--accent-soft);font-weight:500}
+  .footer-legal{display:flex;gap:28px;flex-wrap:wrap}
+  .footer-legal a{color:var(--muted);transition:color .2s}
+  .footer-legal a:hover{color:var(--text)}
+  .agency{background:var(--bg-2);border-top:1px solid #1a1b21;padding:56px 0 0}
+  .agency-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:48px}
+  .agency .brand-name{font-size:20px}
+  .agency p.blurb{font:400 15px/1.6 var(--font-body);margin-top:14px;max-width:400px}
+  .agency h4{font:700 13px/1 var(--font-body);letter-spacing:.06em;color:var(--text);text-transform:uppercase;margin-bottom:24px}
+  .agency ul{list-style:none;display:grid;gap:14px}
+  .agency a,.agency li{font:400 13px/1.5 var(--font-body);color:var(--muted);transition:color .2s}
+  .agency a:hover{color:var(--accent-soft)}
+  .agency-bottom{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:36px 0 40px;margin-top:40px;border-top:1px solid #1a1b21;font:400 13px/1.5 var(--font-body)}
+
+  /* ---------- Reveal ---------- */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease, transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{transition:none!important;animation:none!important}
+    .reveal{opacity:1;transform:none}
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1280px){
+    .wrap{padding:0 56px}
+    .hero h1{font-size:60px;line-height:66px}
+    .h2{font-size:42px}
+    .plans,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .plans .plan:last-child{grid-column:1/-1;max-width:520px;justify-self:center;width:100%}
+    .cards .t-card:last-child{grid-column:1/-1;max-width:520px;justify-self:center;width:100%}
+    .nav-links{display:none}
+    .burger{display:grid}
+    .mobile-menu.open{display:grid;gap:4px;padding:12px 56px 20px;background:var(--bg);border-top:1px solid #1a1b21}
+    .mobile-menu a{padding:12px 16px;border-radius:12px;color:var(--muted);font:500 15px/1 var(--font-body)}
+    .mobile-menu a:hover,.mobile-menu a.active{background:var(--card);color:var(--text)}
+    .metric{right:0;bottom:-30px}
+  }
+  @media (max-width:1024px){
+    .wrap{padding:0 40px}
+    .hero-grid{grid-template-columns:1fr;min-height:auto;gap:72px}
+    .hero-copy{padding-top:0}
+    .preview{max-width:475px;width:100%;margin:0 auto}
+    .metric{right:12px}
+    .contact-grid{grid-template-columns:1fr;gap:56px}
+    .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
+    .agency-grid{grid-template-columns:1fr 1fr;gap:40px}
+  }
+  @media (max-width:768px){
+    .wrap{padding:0 24px}
+    .nav-inner{height:68px}
+    .nav-cta{display:none}
+    .logo{font-size:20px}
+    .mobile-menu.open{padding:12px 24px 20px}
+    .hero{padding:32px 0 72px}
+    .hero h1{font-size:44px;line-height:50px;letter-spacing:-.025em}
+    .hero .lead{font-size:16px;margin-bottom:32px}
+    .hero-ctas .btn{flex:1 1 100%}
+    .preview{height:320px}
+    .h2{font-size:34px}
+    .closing h2{font-size:34px}
+    .pricing,.contact,.testimonials,.faq,.closing{padding:72px 0 80px}
+    .pricing .head,.testimonials .head,.faq .head{margin-bottom:48px}
+    .plans,.cards{grid-template-columns:1fr;gap:28px}
+    .plans .plan:last-child,.cards .t-card:last-child{max-width:none}
+    .plan.featured{margin-top:0}
+    .form-card{padding:28px 22px}
+    .form-row{grid-template-columns:1fr;gap:20px;margin-bottom:20px}
+    .field.full{margin-bottom:20px}
+    .assure div{width:calc(33.33% - 8px);flex:1 1 0;padding:0 10px;font-size:12px;height:auto;min-height:68px;flex-direction:column;align-items:flex-start;justify-content:center}
+    .quote{margin-bottom:36px}
+    .qa summary{font-size:17px;padding:22px 18px}
+    .qa .ans{padding:0 18px 22px}
+    .footer-grid{grid-template-columns:1fr;gap:40px}
+    .agency-grid{grid-template-columns:1fr;gap:36px}
+    .footer-main{padding:52px 0 40px}
+    .footer-bottom{flex-direction:column}
+  }
+  @media (max-width:480px){
+    .hero h1{font-size:36px;line-height:42px}
+    .h2{font-size:30px}
+    .closing h2{font-size:30px}
+    .assure{gap:8px}
+    .assure div{width:100%;flex:1 1 100%;flex-direction:row;align-items:center;min-height:56px}
+    .plan{padding:32px 24px}
+    .plan h3{font-size:22px}
+    .price strong{font-size:28px}
+    .workspace{width:calc(100% - 48px)}
+    .metric{position:static;margin:20px auto 0;width:100%;max-width:243px}
+    .preview{height:340px}
+    .preview h3{font-size:17px}
+    .preview p{font-size:12px}
+    .interactive{right:auto;left:24px;top:auto;bottom:-2px}
+    .badge-speed{right:8px;bottom:8px;font-size:10px}
+    .testimonials .t-card{padding:32px 24px 28px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVIGATION ============ -->
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo">Matrix Digital <span>Growth Studio</span></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#home" class="nav-link active">Home</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#contact" class="nav-cta">Let’s Talk</a>
+      <span class="account" aria-label="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      </span>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#home" class="active">Home</a>
+    <a href="#services">Services</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 01 HERO ============ -->
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div class="hero-copy reveal">
+      <span class="eyebrow"><i style="width:8px;height:8px;border-radius:4px;background:var(--accent);display:block"></i>YOUR BUSINESS DESERVES TO BE SEEN.</span>
+      <h1>Turn Your Business<br>Into a <span class="grad">Brand</span><br><span class="grad">People Remember.</span></h1>
+      <p class="lead">Your business has something valuable to offer. Let’s make sure the world knows about it. From building a professional website to creating a powerful digital presence, we help businesses attract the right audience, build trust, and grow online.</p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary">Let’s Build Your Brand
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        </a>
+        <a href="#services" class="btn btn-secondary">Explore Our Services</a>
+      </div>
+      <p class="tagline">YOUR VISION. OUR DIGITAL EXPERTISE. ONE POWERFUL BRAND.</p>
+    </div>
+
+    <div class="metric-wrap reveal">
+      <div class="preview" aria-label="Conversion architecture preview">
+        <div class="chrome">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="addr">nexusstudio.agency/flagship
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c7c4d8" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+          </div>
+        </div>
+        <div class="preview-body">
+          <!-- Replace with the downloaded "Digital workspace image" asset (see notes) -->
+          <div class="workspace" role="img" aria-label="Digital workspace visual">
+            <span class="shape a"></span><span class="shape b"></span><span class="shape c"></span>
+            <span class="badge-live">Live Preview</span>
+            <span class="badge-speed">99.8% Speed Index</span>
+          </div>
+          <h3>Conversion Architecture</h3>
+          <p>Optimized for global enterprise scale</p>
+          <span class="interactive">Interactive</span>
+        </div>
+      </div>
+      <div class="metric">
+        <div class="verified">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <strong>1.2M+</strong>
+          <small>Audience Impressions</small>
+        </div>
+        <span class="live" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 PRICING ============ -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="head center reveal">
+      <span class="eyebrow">SIMPLE. TRANSPARENT. VALUE-DRIVEN.</span>
+      <h2 class="h2">The Right Investment for<br>Your Business Growth.</h2>
+      <p class="lead">Whether you’re just getting started or ready to take your business to the next level, we have solutions designed around your goals. No unnecessary expenses. Just the right digital solutions to help your brand grow.</p>
+    </div>
+
+    <div class="plans">
+      <!-- Starter -->
+      <article class="plan reveal">
+        <div class="tier">Tier 01</div>
+        <h3>Starter Presence</h3>
+        <p class="desc">For businesses taking their first step into the digital world.</p>
+        <div class="price"><small>Starting at</small><strong>₹24,999</strong></div>
+        <div class="inc-title">What’s included:</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Basic business website</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Mobile-friendly design</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Social media profile setup</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Basic SEO optimization</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Contact form integration</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Get Started</a>
+      </article>
+
+      <!-- Growth (featured) -->
+      <article class="plan featured reveal">
+        <span class="badge-pop">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg>
+          MOST POPULAR
+        </span>
+        <div class="tier">Tier 02 • Growth Catalyst</div>
+        <h3>Business Growth</h3>
+        <p class="desc">For businesses ready to build visibility and attract more customers.</p>
+        <div class="price"><small>Starting at</small><strong>₹49,999</strong></div>
+        <div class="inc-title">Everything in Starter, plus:</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Professional website development</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Social media management</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Custom content creation</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Advanced SEO optimization</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Targeted lead generation strategy</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Performance tracking &amp; analytics</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">Grow My Business</a>
+      </article>
+
+      <!-- Personal Brand Pro -->
+      <article class="plan reveal">
+        <div class="tier">Tier 03 • Enterprise</div>
+        <h3>Personal Brand Pro</h3>
+        <p class="desc">For entrepreneurs and businesses looking to establish a strong digital identity.</p>
+        <div class="price"><small>Tailored Investment</small><strong>Let’s Discuss</strong></div>
+        <div class="inc-title">Flagship suite:</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Premium bespoke website development</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Complete brand positioning &amp; voice</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Omnichannel social media strategy</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Personal branding &amp; PR kits</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Digital marketing campaigns</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Lead conversion system &amp; funnels</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Dedicated ongoing strategic support</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Build My Brand</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 CONTACT / LEAD FORM ============ -->
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <span class="eyebrow">LET’S START SOMETHING GREAT.</span>
+      <h2 class="h2">Ready to Take Your<br>Business Online?</h2>
+      <p class="lead">Great brands don’t happen overnight. They start with one conversation. Tell us a little about your business, your goals, and what you’re looking to achieve. We’ll help you figure out the right digital strategy to move forward.</p>
+
+      <blockquote class="quote">
+        <p>“Let’s turn your ideas into something people can recognize, trust, and remember.”</p>
+      </blockquote>
+
+      <div class="assure-label">Our assurance</div>
+      <div class="assure">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+          <span>&lt; 24h<br>Response</span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>
+          <span>NDA Backed</span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+          <span>100%<br>Confidential</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="form-card reveal" id="inquiry" novalidate>
+      <div class="form-row">
+        <div class="field">
+          <label for="fullname">Full Name <span class="req">*</span></label>
+          <input id="fullname" name="fullname" type="text" placeholder="e.g. Vikram Singhania" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="business">Business Name <span class="req">*</span></label>
+          <input id="business" name="business" type="text" placeholder="e.g. Singhania Ventures" required autocomplete="organization">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="email">Email Address <span class="req">*</span></label>
+          <input id="email" name="email" type="email" placeholder="vikram@enterprise.com" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel">
+        </div>
+      </div>
+      <div class="field full">
+        <label for="service">Services Interested In <span class="req">*</span></label>
+        <div class="control">
+          <select id="service" name="service" required>
+            <option value="" disabled selected>Select an engagement area...</option>
+            <option>Website Development</option>
+            <option>Digital Marketing</option>
+            <option>Social Media Management</option>
+            <option>Personal Branding</option>
+            <option>Complete Digital Solutions</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="field full">
+        <label for="goals">Tell us about your business &amp; goals</label>
+        <textarea id="goals" name="goals" placeholder="Briefly describe your products, current challenges, and targets for the next 6-12 months..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary submit">Let’s Discuss My Project</button>
+      <p class="privacy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/></svg>
+        Your information stays private. We’ll get in touch to understand your requirements.
+      </p>
+      <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ============ 04 TESTIMONIALS ============ -->
+<section class="testimonials" id="about">
+  <div class="wrap">
+    <div class="head center reveal">
+      <span class="eyebrow">REAL EXPERIENCES. REAL GROWTH.</span>
+      <h2 class="h2">Don’t Just Take Our Word For It.</h2>
+      <p class="lead">The best measure of our work is the people we’ve worked with. Building a successful digital presence is a journey, and we’re proud to be part of our clients’ growth stories.</p>
+    </div>
+
+    <div class="cards">
+      <!-- Placeholder copy: replace with genuine client reviews -->
+      <article class="t-card reveal">
+        <div class="stars" aria-label="5 out of 5 stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg>
+        </div>
+        <blockquote>“They completely redefined our company’s digital image. Our inbound inquiries jumped by over 200% within 60 days of launching the new site.”</blockquote>
+        <div class="who">
+          <span class="avatar" aria-hidden="true">AM</span>
+          <div><strong>Aarav Mehta</strong><small>Founder, Zenith FinTech</small></div>
+        </div>
+      </article>
+
+      <article class="t-card reveal">
+        <div class="stars" aria-label="5 out of 5 stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg>
+        </div>
+        <blockquote>“The strategic positioning and personal branding helped me establish immense authority in my consulting niche. Phenomenal attention to detail and craft.”</blockquote>
+        <div class="who">
+          <span class="avatar" aria-hidden="true">PS</span>
+          <div><strong>Priya Sharma</strong><small>CEO &amp; Growth Consultant, Elevate Global</small></div>
+        </div>
+      </article>
+
+      <article class="t-card reveal">
+        <div class="stars" aria-label="5 out of 5 stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7.2L12 17.8 5.7 21.4l1.6-7.2L2 9.6 9 9z"/></svg>
+        </div>
+        <blockquote>“Working with them was the best decision for our brand. Seamless communication, incredible design aesthetics, and a website that actually converts.”</blockquote>
+        <div class="who">
+          <span class="avatar" aria-hidden="true">RK</span>
+          <div><strong>Rohan Kapoor</strong><small>Managing Director, Nexa Retail</small></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 FAQ ============ -->
+<section class="faq" id="services">
+  <div class="wrap">
+    <div class="head center reveal">
+      <span class="eyebrow">GOT QUESTIONS?</span>
+      <h2 class="h2">Everything You Need to Know<br>Before Getting Started.</h2>
+    </div>
+
+    <div class="accordion" id="accordion">
+      <details class="qa open" open>
+        <summary>What services do you offer?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">We offer digital marketing, website development, social media management, personal branding, SEO, and other digital solutions designed to help businesses establish and grow their online presence.</div>
+      </details>
+      <details class="qa">
+        <summary>Do I need a website for my business?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">A website gives your business a professional online identity. It helps potential customers understand your services, explore your work, and connect with you whenever they need.</div>
+      </details>
+      <details class="qa">
+        <summary>Can you help my business build a personal brand?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">Absolutely! We help entrepreneurs and business owners develop a recognizable digital identity through strategic branding, website development, and social media presence.</div>
+      </details>
+      <details class="qa">
+        <summary>How long does it take to develop a website?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">The timeline depends on the website’s complexity, features, and requirements. Once we understand your project, we’ll provide an estimated delivery timeline.</div>
+      </details>
+      <details class="qa">
+        <summary>Do you provide ongoing support after project completion?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">Yes! Depending on the selected service package, we can provide ongoing maintenance, updates, and digital marketing support.</div>
+      </details>
+      <details class="qa">
+        <summary>How do I get started?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">Fill out the enquiry form, tell us about your business, and we’ll connect with you to discuss your goals and the best solutions for your brand.</div>
+      </details>
+      <details class="qa">
+        <summary>Do you work with small businesses and startups?
+          <span class="ico"><svg class="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><svg class="minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+        </summary>
+        <div class="ans">Of course! Whether you’re starting from scratch or already running an established business, we have digital solutions to support your next stage of growth.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 CLOSING CTA ============ -->
+<section class="closing">
+  <div class="wrap reveal">
+    <h2>Let’s Build Something That Matters.</h2>
+    <p>Your business has a story worth sharing. Let’s give it the digital presence it deserves. From your first website to a complete digital brand, we’re here to help you make your mark.</p>
+    <a href="#contact" class="btn btn-primary">Start Your Journey
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ 07 MAIN FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap footer-main">
+    <div class="footer-grid">
+      <div class="brand-col">
+        <div class="brand"><span class="brand-dot"></span><span class="brand-name">Nexus<span>Studio</span></span></div>
+        <p>Transforming ambitious businesses and entrepreneurs into iconic, memorable digital brands through strategic design and high-performance marketing.</p>
+      </div>
+      <div class="col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>Our Services</h4>
+        <ul>
+          <li><a href="#services">Digital Marketing</a></li>
+          <li><a href="#services">Website Development</a></li>
+          <li><a href="#services">Social Media Management</a></li>
+          <li><a href="#services">Personal Branding</a></li>
+          <li><a href="#services">SEO Optimization</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>Contact Information</h4>
+        <div class="contact-list">
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>hello@yourbrand.com</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>+91 XXXXX XXXXX</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>India</div>
+        </div>
+        <div class="socials">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.3V11H7v4h3v5h4v-5h3l.5-4H14V9c0-.6.4-1 1-1z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9h3.5v11H4zM5.7 3.5a2 2 0 110 4 2 2 0 010-4zM10 9h3.4v1.6h.1c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5V20h-3.5v-5.1c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V20H10z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Your Brand Name. All Rights Reserved.</span>
+    <span class="tag">Designed to Build. Created to Grow.</span>
+  </div>
+</footer>
+
+<!-- ============ 08 AGENCY FOOTER ============ -->
+<footer class="agency">
+  <div class="wrap">
+    <div class="agency-grid">
+      <div>
+        <div class="brand-name">Nexus<span>Studio</span></div>
+        <p class="blurb">Engineering category-defining digital flagships, elite web applications, and hyper-conversion growth engines for visionary enterprises.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#about">About Studio</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#contact">Inquire Partnership</a></li>
+          <li><a href="mailto:hello@nexusstudio.agency">hello@nexusstudio.agency</a></li>
+          <li>San Francisco • London</li>
+        </ul>
+      </div>
+    </div>
+    <div class="agency-bottom">
+      <span>© 2025 Nexus Studio Agency. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security Protocol</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav shadow
+  const nav = document.querySelector('.nav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+
+  // Mobile menu
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+  }));
+
+  // Active nav link on scroll
+  const sections = ['home', 'pricing', 'contact', 'about', 'services'].map(id => document.getElementById(id));
+  const navLinks = document.querySelectorAll('.nav-links .nav-link, .mobile-menu a');
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const id = e.target.id;
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  sections.forEach(s => s && spy.observe(s));
+
+  // Accordion: one open at a time
+  const items = document.querySelectorAll('#accordion details');
+  items.forEach(d => d.addEventListener('toggle', () => {
+    if (d.open) items.forEach(o => { if (o !== d) o.open = false; });
+    d.classList.toggle('open', d.open);
+  }));
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Form: front-end validation only (connect to your backend or form service)
+  const form = document.getElementById('inquiry');
+  const status = document.getElementById('formStatus');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const required = form.querySelectorAll('[required]');
+    let ok = true;
+    required.forEach(f => {
+      const valid = f.checkValidity() && f.value.trim() !== '';
+      f.style.borderColor = valid ? '' : '#93000a';
+      if (!valid) ok = false;
+    });
+    status.textContent = ok
+      ? 'Thanks! We’ll be in touch shortly.'
+      : 'Please complete the required fields.';
+    if (ok) form.reset();
+  });
+</script>
+</body>
+</html>
